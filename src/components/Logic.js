@@ -11,8 +11,9 @@ const [strikes, setStrikes] = useState(0);
 const [secretNumber, setSecretNumber] = useState(undefined)
 
 
-    const createTargetNumber = (maxDigits) => {
-        const digitRange = maxDigits ? maxDigits : digits
+    // Call this function to create a new randomly generated secret number
+    const createSecretNumber = (selectedDifficulty) => {
+        const digitRange = selectedDifficulty ? selectedDifficulty : digits
         const secretNumber = Math.floor(Math.random() * digitRange) + 1
         setSecretNumber(secretNumber);
     }
@@ -32,6 +33,8 @@ const [secretNumber, setSecretNumber] = useState(undefined)
                 onEnter();
             }
 
+
+            // Validate the currently pressed key
             if (isFinite(event.target.value)) {
 
                 // If the key pressed is a number, set its value to our currentEntry variable
@@ -42,8 +45,6 @@ const [secretNumber, setSecretNumber] = useState(undefined)
                 setFooter(`numbers only plz FR FR no cap`)
                 console.log('currentEntry: ', currentEntry)
             }
-
-            // validateCurrentKey(event)
 
         }, [currentEntry] // eslint-disable-line react-hooks/exhaustive-deps
     )
@@ -70,27 +71,11 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         }
     }
 
-    const validateCurrentKey = (event) => {
-
-        // Check if the key pressed is a number
-        if (isFinite(event.target.value)) {
-
-            // If the key pressed is a number, set its value to our currentEntry variable
-            setCurrentEntry(event.target.value)
-
-        } else {
-
-            setFooter(`numbers only plz FR FR no cap`)
-            console.log('currentEntry: ', currentEntry)
-        }
-    }
-
     const onDifficultySelect = (event) => {
         console.log('difficulty value: ', event.target.value)
-        createTargetNumber(event.target.value)
-        // const secretNumber = Math.floor(Math.random() * event.target.value) + 1
-        // console.log('secretNumber: ', secretNumber)
-        // setSecretNumber(secretNumber);
+
+        // Select a new secret number
+        createSecretNumber(event.target.value)
 
         setDigits(event.target.value)
 
@@ -108,7 +93,7 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         setStrikes(0)
         setSecretNumber(undefined)
 
-        createTargetNumber();
+        createSecretNumber();
         // window.location.reload(false);
     }
 
@@ -130,7 +115,7 @@ const [secretNumber, setSecretNumber] = useState(undefined)
     }, [handleKeyPress]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        createTargetNumber()
+        createSecretNumber()
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
