@@ -23,7 +23,7 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         (event) => {
 
             // What is a web browser 'event' anyway?
-            console.log(`this is a browser keyPress event: `, event)
+            // console.log(`this is a browser keyPress event: `, event)
 
             setFooter(``)
 
@@ -49,6 +49,7 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         }, [currentEntry] // eslint-disable-line react-hooks/exhaustive-deps
     )
 
+
     const onEnter = () => {
 
         // A little hint for testing purposes...
@@ -71,6 +72,7 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         }
     }
 
+
     const onDifficultySelect = (event) => {
         console.log('difficulty value: ', event.target.value)
 
@@ -84,6 +86,7 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         setGameOver(false)
     }
 
+    // Reset the game to original values
     const reset = () => {
         setCurrentEntry('')
         setDigits(10)
@@ -97,7 +100,8 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         // window.location.reload(false);
     }
 
-    // Check if the user presses the Space bar and disable it
+
+    // Check if the user presses the Space bar during the game and disable it
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress);
 
@@ -114,6 +118,8 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         };
     }, [handleKeyPress]);  // eslint-disable-line react-hooks/exhaustive-deps
 
+
+    // Generate initial secret number
     useEffect(() => {
         createSecretNumber()
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
@@ -139,8 +145,10 @@ const [secretNumber, setSecretNumber] = useState(undefined)
                     <select value={digits} onChange={onDifficultySelect} disabled={gameOver} >
                         <option value='10'>Easy: 1-10</option>
                         <option value='100'>Normal: 1-100</option>
-                        <option value='1000'>Hard: 1-1,000</option>
-                        <option value='10000'>Silliness: 1-10,000</option>
+                        <option value='1000'>Medium: 1-1,000</option>
+                        <option value='10000'>Hard: 1-10,000</option>
+                        <option value='100000'>Crazy: 1-100,000</option>
+                        <option value='1000000'>Insane! 1-1,000,000</option>
                     </select>
                 </div>
             {!gameOver && (
