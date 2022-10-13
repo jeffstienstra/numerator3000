@@ -7,8 +7,8 @@ function Logic() {
     const [footer, setFooter] = useState('')
     const [gameOver, setGameOver] = useState(false)
     const [hint, setHint] = useState(`What's my number?`)
-    const [highGuesses, setHighGuesses] = useState([10])
-    const [lowGuesses, setLowGuesses] = useState([1])
+    const [highGuesses, setHighGuesses] = useState(['10'])
+    const [lowGuesses, setLowGuesses] = useState(['1'])
     const [guesses, setGuesses] = useState(0);
     const [secretNumber, setSecretNumber] = useState(undefined)
 
@@ -83,12 +83,15 @@ function Logic() {
             setGuesses(guesses + 1)
             setLowGuesses([...lowGuesses, currentGuess].sort((a, b) => {return b-a}))
             clearInputField()
+            console.log('lowGuesses: ', [...lowGuesses, currentGuess].sort((a, b) => {return b-a}))
 
         } else if (currentGuess > secretNumber) {
             setHint(`${currentGuess} is too high`)
             setGuesses(guesses + 1)
             setHighGuesses([...highGuesses, currentGuess].sort((a, b) => {return a-b}))
             clearInputField()
+            console.log('highGuesses: ', [...highGuesses, currentGuess].sort((a, b) => {return a-b}))
+
         }
 
     }
@@ -164,9 +167,9 @@ const selectedDifficulty = event.target.value
                 <div className='difficulty'>
                     <select value={difficulty} onChange={onDifficultySelect} >
                         <option value={difficultyOptions.easy}>Easy</option>
-                        <option value={difficultyOptions.average}>Average</option>
+                        <option value={difficultyOptions.average}>Avg</option>
                         <option value={difficultyOptions.hard}>Hard</option>
-                        <option value={difficultyOptions.veryHard}>Very Hard</option>
+                        <option value={difficultyOptions.veryHard}>Harder</option>
                         <option value={difficultyOptions.crazy}>Crazy</option>
                         <option value={difficultyOptions.insane}>Insane</option>
                     </select>
