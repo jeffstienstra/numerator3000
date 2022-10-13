@@ -2,18 +2,29 @@ import { useEffect, useState, useCallback } from 'react'
 
 function Logic() {
 
-const [currentEntry, setCurrentEntry] = useState('')
-const [digits, setDigits] = useState(10)
-const [footer, setFooter] = useState('')
-const [gameOver, setGameOver] = useState(false)
-const [hint, setHint] = useState(`What's my number?`)
-const [strikes, setStrikes] = useState(0);
-const [secretNumber, setSecretNumber] = useState(undefined)
+    const [currentGuess, setCurrentGuess] = useState('')
+    const [difficulty, setDifficulty] = useState(10)
+    const [footer, setFooter] = useState('')
+    const [gameOver, setGameOver] = useState(false)
+    const [hint, setHint] = useState(`What's my number?`)
+    const [highGuesses, setHighGuesses] = useState([10])
+    const [lowGuesses, setLowGuesses] = useState([1])
+    const [guesses, setGuesses] = useState(0);
+    const [secretNumber, setSecretNumber] = useState(undefined)
 
+
+    const difficultyOptions = {
+        easy: 10,
+        average: 100,
+        hard: 1000,
+        veryHard: 10000,
+        crazy: 100000,
+        insane: 1000000,
+    }
 
     // Call this function to create a new randomly generated secret number
     const createSecretNumber = (selectedDifficulty) => {
-        const digitRange = selectedDifficulty ? selectedDifficulty : digits
+        const digitRange = selectedDifficulty ? selectedDifficulty : difficulty
         const secretNumber = Math.floor(Math.random() * digitRange) + 1
         setSecretNumber(secretNumber);
     }
@@ -25,84 +36,96 @@ const [secretNumber, setSecretNumber] = useState(undefined)
             // What is a web browser 'event' anyway?
             // console.log(`this is a browser keyPress event: `, event)
 
-            setFooter(``)
+            setFooter(``) // remove error text after each keypress
 
             if (event.key === 'Enter') {
-
-                // Go to the logic that checks if we guess the right number
-                onEnter();
+                onEnter(event); // run the logic that checks if we guessed the right number
             }
 
+            if (isFinite(event.target.value)) { // validate the currently pressed key
 
-            // Validate the currently pressed key
-            if (isFinite(event.target.value)) {
-
-                // If the key pressed is a number, set its value to our currentEntry variable
-                setCurrentEntry(event.target.value)
+                // Number(currentGuess).toLocaleString("en-US")
+                setCurrentGuess(event.target.value) // if keypress is a number set its value to currentGuess
 
             } else {
 
                 setFooter(`numbers only plz FR FR no cap`)
-                console.log('currentEntry: ', currentEntry)
+                console.log('currentGuess: ', currentGuess)
             }
 
-        }, [currentEntry] // eslint-disable-line react-hooks/exhaustive-deps
+        }, [currentGuess] // eslint-disable-line react-hooks/exhaustive-deps
     )
 
 
-    const onEnter = () => {
+    const onEnter = (event) => {
+
+        if (currentGuess === "") return
+
+        const clearInputField = () => {
+            // Clear the input field each time Enter is pressed
+            if (event.target.value === currentGuess){
+                event.target.value= "";
+            }
+        }
 
         // A little hint for testing purposes...
         console.log('secretNumber: ', secretNumber)
-
+        console.log('currentGuess: ', currentGuess)
 
         // Check if our current guess equals the secret number
-        if(currentEntry.toString() === secretNumber.toString()) {
+        if(currentGuess.toString() === secretNumber.toString()) {
             console.log('YOU WIN!!')
+            setGuesses(guesses + 1)
             setGameOver(true)
 
-        } else if (currentEntry < secretNumber) {
-            setHint(`${currentEntry} is too low`)
-            setStrikes(strikes + 1)
+        } else if (currentGuess < secretNumber) {
+            setHint(`${currentGuess} is too low`)
+            setGuesses(guesses + 1)
+            setLowGuesses([...lowGuesses, currentGuess].sort((a, b) => {return b-a}))
+            clearInputField()
 
-        } else if (currentEntry > secretNumber) {
-            setHint(`${currentEntry} is too high`)
-            setStrikes(strikes + 1)
-
+        } else if (currentGuess > secretNumber) {
+            setHint(`${currentGuess} is too high`)
+            setGuesses(guesses + 1)
+            setHighGuesses([...highGuesses, currentGuess].sort((a, b) => {return a-b}))
+            clearInputField()
         }
+
     }
 
+    const initializeHighLowGuesses = (selectedDifficulty) => {
+        setLowGuesses([1])
+        setHighGuesses(selectedDifficulty ? [selectedDifficulty]: [difficulty])
+    }
 
     const onDifficultySelect = (event) => {
         console.log('difficulty value: ', event.target.value)
-
+const selectedDifficulty = event.target.value
         // Select a new secret number
-        createSecretNumber(event.target.value)
+        createSecretNumber(selectedDifficulty)
 
-        setDigits(event.target.value)
-
-        setCurrentEntry('')
-
+        setDifficulty(selectedDifficulty)
+        initializeHighLowGuesses(selectedDifficulty)
+        setCurrentGuess('')
+        setFooter('')
         setGameOver(false)
+        setHint(`What's my number?`)
+        setGuesses(0)
     }
 
     // Reset the game to original values
     const reset = () => {
-        setCurrentEntry('')
-        setDigits(10)
+        setCurrentGuess('')
         setFooter('')
         setGameOver(false)
         setHint(`What's my number?`)
-        setStrikes(0)
-        setSecretNumber(undefined)
-
+        setGuesses(0)
         createSecretNumber();
-        // window.location.reload(false);
+        initializeHighLowGuesses()
     }
 
-
-    // Check if the user presses the Space bar during the game and disable it
     useEffect(() => {
+        // Check if the user presses the Space bar during the game and disable it
         document.addEventListener('keydown', handleKeyPress);
 
         // While game is not over, don't allow space button to be pressed
@@ -119,8 +142,8 @@ const [secretNumber, setSecretNumber] = useState(undefined)
     }, [handleKeyPress]);  // eslint-disable-line react-hooks/exhaustive-deps
 
 
-    // Generate initial secret number
     useEffect(() => {
+        // Generate initial secret number
         createSecretNumber()
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -128,31 +151,29 @@ const [secretNumber, setSecretNumber] = useState(undefined)
         <div className='logic'>
             <div>
                 <h1 className='green'>NUMERATOR | 3
-                {strikes <= 3 && (
                     <>
-                        <span className={(!gameOver && strikes < 1) ? 'green' : 'red'}>◉</span>
-                        <span className={(!gameOver && strikes < 2) ? 'green' : 'red'}>◉</span>
-                        <span className={(!gameOver && strikes < 3) ? 'green' : 'red'}>◉</span>
+                        <span className={((!gameOver && guesses < 1)) || gameOver ? 'green' : 'red'}>◉</span>
+                        <span className={((!gameOver && guesses < 2)) || gameOver ? 'green' : 'red'}>◉</span>
+                        <span className={((!gameOver && guesses < 3)) || gameOver ? 'green' : 'red'}>◉</span>
                     </>
-                )}
-                {strikes > 3 && (
-                    [...Array(strikes)].map((span, i) => <span className={!gameOver ? 'red' : 'green'} key={i}>◉</span>)
+                {guesses > 3 && (
+                    [...Array(guesses - 3)].map((span, i) => <span className={!gameOver ? 'red' : 'green'} key={i}>◉</span>)
                 )}
                 </h1>
             </div>
                 <div className='difficulty'>
-                    {/* <p className='label'>Range</p> */}
-                    <select value={digits} onChange={onDifficultySelect} disabled={gameOver} >
-                        <option value='10'>Easy: 1-10</option>
-                        <option value='100'>Normal: 1-100</option>
-                        <option value='1000'>Medium: 1-1,000</option>
-                        <option value='10000'>Hard: 1-10,000</option>
-                        <option value='100000'>Crazy: 1-100,000</option>
-                        <option value='1000000'>Insane! 1-1,000,000</option>
+                    <select value={difficulty} onChange={onDifficultySelect} >
+                        <option value={difficultyOptions.easy}>Easy</option>
+                        <option value={difficultyOptions.average}>Average</option>
+                        <option value={difficultyOptions.hard}>Hard</option>
+                        <option value={difficultyOptions.veryHard}>Very Hard</option>
+                        <option value={difficultyOptions.crazy}>Crazy</option>
+                        <option value={difficultyOptions.insane}>Insane</option>
                     </select>
                 </div>
             {!gameOver && (
                 <div className='input-field'>
+                    <p>Range: {lowGuesses[0]} - {highGuesses[0]}</p>
                     <p>{hint}</p>
                     <input
                         className='number-input'
@@ -160,35 +181,33 @@ const [secretNumber, setSecretNumber] = useState(undefined)
                         type='text'
                         autoFocus
                         placeholder='?'
-                        value={currentEntry}
+                        value={currentGuess}
                         onChange={(event) => handleKeyPress(event)}
                         />
                     <p className='error'>{footer}</p>
-                    {strikes > 0 && (
-                        <p>Attemps: {strikes}</p>
+                    {guesses > 0 && (
+                        <p>Attemps: {guesses}</p>
                     )}
                 </div>
             )}
             {gameOver && (
-
-                // A container to hold the replay button
                 <div className='replay-button'>
-                    <p>{currentEntry} is correct</p>
+                    <p>{currentGuess} is correct</p>
                     <button
                         onClick={reset}
                     ><div className='replay'>▶</div></button>
-                    {strikes === 0 && (
-                        <p>You did it in {strikes + 1} try, amazing!</p>
+                    {guesses === 0 && (
+                        <p>You did it in {guesses} try, amazing!</p>
                     )}
-                    {strikes > 0 && strikes < 3 &&(
-                        <p>You did it in {strikes + 1} tries, nice!</p>
+                    {guesses > 0 && guesses < 3 &&(
+                        <p>You did it in {guesses} tries, nice!</p>
                     )}
-                    {strikes >= 3 && strikes < 12 &&(
-                        <p>You did it in {strikes + 1} tries, not bad.</p>
+                    {guesses >= 3 && guesses < 12 &&(
+                        <p>You did it in {guesses} tries, not bad.</p>
                     )}
-                    {strikes >= 12 &&(
+                    {guesses >= 12 &&(
                         <>
-                        <p>{strikes + 1} tries!? That took forever!</p>
+                        <p>{guesses} tries!? That took forever!</p>
                         <p>I wonder if you need a better strategy...</p>
                         </>
                     )}

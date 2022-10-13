@@ -4,8 +4,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
-In the project directory, you can run:
+Be sure to use node `v16.14.2` or later.
+In the project directory, for live reload using nodemon run:
+### `npx nodemon app.js`
 
+otherwise run:
 ### `npm start`
 
 Runs the app in the development mode.\
