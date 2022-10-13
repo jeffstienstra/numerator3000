@@ -192,7 +192,7 @@ const selectedDifficulty = event.target.value
             )}
             {gameOver && (
                 <div className='replay-button'>
-                    <p>{currentGuess} is correct</p>
+                    <p>{Number(currentGuess).toLocaleString()} is correct</p>
                     <button
                         onClick={reset}
                     ><div className='replay'>▶</div></button>
