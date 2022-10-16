@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 function Logic() {
 
     const [currentGuess, setCurrentGuess] = useState('')
-    const [difficulty, setDifficulty] = useState(10)
+    const [difficulty, setDifficulty] = useState('easy')
     const [footer, setFooter] = useState('')
     const [gameOver, setGameOver] = useState(false)
     const [hint, setHint] = useState(`What's my number?`)
@@ -14,43 +14,76 @@ function Logic() {
 
 
     const difficultyOptions = {
-        easy: 10,
+        easy: 10, // default
         average: 100,
         hard: 1000,
-        veryHard: 10000,
+        harder: 10000,
         crazy: 100000,
         insane: 1000000,
     }
 
+    const targetGuesses = {
+        easy: 3, // default
+        average: 6,
+        hard: 10,
+        harder: 12,
+        crazy: 15,
+        insane: 21,
+    }
+
+    const victoryMessages = {
+        firstTry: `Amazing! You nailed it in 1 try!`,
+        excellent: `Impressive! You guessed it in ${guesses} tries.`,
+        good: `Good guessing! You got it in ${guesses} tries.`,
+        average: `${guesses} tries, not bad! But try to take more risks.`,
+        poor: `Yipes, ${guesses} guesses is a bit rough.`,
+        terrible: `Have you no strategy!? ${guesses} guesses takes forever!`,
+    }
+
+    const selectVictoryMessage = () => {
+        if (guesses === targetGuesses) {
+            return victoryMessages.average
+        } else if (guesses === 1) {
+            return victoryMessages.firstTry
+        } else if (guesses > 1 && guesses < 3) {
+            return victoryMessages.excellent
+        } else if (guesses >= 3 && guesses < 5) {
+            return victoryMessages.good
+        } else if (guesses >= 5 && guesses < 12) {
+            return victoryMessages.poor
+        } else if (guesses >= 12) {
+            return victoryMessages.terrible
+        }
+    }
+
     // Call this function to create a new randomly generated secret number
     const createSecretNumber = (selectedDifficulty) => {
-        const digitRange = selectedDifficulty ? selectedDifficulty : difficulty
-        const secretNumber = Math.floor(Math.random() * digitRange) + 1
+        console.log('6. selectedDifficulty', selectedDifficulty)
+        console.log('7. difficultyOptions[selectedDifficulty]', difficultyOptions[selectedDifficulty])
+        const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy
+        const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
+
+        console.log('secretNumber: ', secretNumber)
         setSecretNumber(secretNumber);
     }
 
     const handleKeyPress = useCallback(
-
         (event) => {
-
             // What is a web browser 'event' anyway?
             // console.log(`this is a browser keyPress event: `, event)
-
             setFooter(``) // remove error text after each keypress
 
             if (event.key === 'Enter') {
                 onEnter(event); // run the logic that checks if we guessed the right number
             }
 
-            if (isFinite(event.target.value)) { // validate the currently pressed key
+            if (isFinite(event.target.value)) { // verify presed key is a number
 
                 // Number(currentGuess).toLocaleString("en-US")
                 setCurrentGuess(event.target.value) // if keypress is a number set its value to currentGuess
-
             } else {
-
-                setFooter(`numbers only plz FR FR no cap`)
-                console.log('currentGuess: ', currentGuess)
+                setFooter(`* numbers only`)
+                // console.log('currentGuess: ', currentGuess)
             }
 
         }, [currentGuess] // eslint-disable-line react-hooks/exhaustive-deps
@@ -68,62 +101,68 @@ function Logic() {
             }
         }
 
-        // A little hint for testing purposes...
-        console.log('secretNumber: ', secretNumber)
-        console.log('currentGuess: ', currentGuess)
-
         // Check if our current guess equals the secret number
         if(currentGuess.toString() === secretNumber.toString()) {
-            console.log('YOU WIN!!')
             setGuesses(guesses + 1)
             setGameOver(true)
+            // selectVictoryMessage()
 
         } else if (currentGuess < secretNumber) {
             setHint(`${currentGuess} is too low`)
             setGuesses(guesses + 1)
             setLowGuesses([...lowGuesses, currentGuess].sort((a, b) => {return b-a}))
             clearInputField()
-            console.log('lowGuesses: ', [...lowGuesses, currentGuess].sort((a, b) => {return b-a}))
+            // console.log('lowGuesses: ', [...lowGuesses, currentGuess].sort((a, b) => {return b-a}))
 
         } else if (currentGuess > secretNumber) {
             setHint(`${currentGuess} is too high`)
             setGuesses(guesses + 1)
             setHighGuesses([...highGuesses, currentGuess].sort((a, b) => {return a-b}))
             clearInputField()
-            console.log('highGuesses: ', [...highGuesses, currentGuess].sort((a, b) => {return a-b}))
+            // console.log('highGuesses: ', [...highGuesses, currentGuess].sort((a, b) => {return a-b}))
 
         }
 
     }
 
     const initializeHighLowGuesses = (selectedDifficulty) => {
+        console.log('5. selectedDifficulty: ', selectedDifficulty)
         setLowGuesses([1])
-        setHighGuesses(selectedDifficulty ? [selectedDifficulty]: [difficulty])
+        setHighGuesses(selectedDifficulty ? [difficultyOptions[selectedDifficulty]] : [difficultyOptions.easy])
     }
 
     const onDifficultySelect = (event) => {
-        console.log('difficulty value: ', event.target.value)
-const selectedDifficulty = event.target.value
-        // Select a new secret number
-        createSecretNumber(selectedDifficulty)
+        const selectedDifficulty = event.target.value
+        console.log('1. event.target.value: ', event.target.value)
+        console.log('2. selectedDifficulty: ', selectedDifficulty)
+        console.log('3. difficultyOptions.value: ', difficultyOptions[selectedDifficulty])
+        console.log('4. difficultyOptions.hard: ', difficultyOptions.hard)
 
         setDifficulty(selectedDifficulty)
+
+        createSecretNumber(difficultyOptions[selectedDifficulty])
+
         initializeHighLowGuesses(selectedDifficulty)
+
         setCurrentGuess('')
+
         setFooter('')
+
         setGameOver(false)
+
         setHint(`What's my number?`)
+
         setGuesses(0)
     }
 
-    // Reset the game to original values
+    // Reset the game to default values
     const reset = () => {
         setCurrentGuess('')
         setFooter('')
         setGameOver(false)
         setHint(`What's my number?`)
         setGuesses(0)
-        createSecretNumber();
+        createSecretNumber(difficultyOptions[difficulty]);
         initializeHighLowGuesses()
     }
 
@@ -148,6 +187,11 @@ const selectedDifficulty = event.target.value
     useEffect(() => {
         // Generate initial secret number
         createSecretNumber()
+        // console.log('useEffect: difficulty', difficulty)
+        // console.log('useEffect: targetGuesses.difficulty', targetGuesses.difficulty)
+        // console.log('useEffect: targetGuesses.easy', targetGuesses.easy)
+
+        // console.log('useEffect: difficultyOptions.easy', difficultyOptions.easy)
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
@@ -166,23 +210,24 @@ const selectedDifficulty = event.target.value
             </div>
                 <div className='difficulty'>
                     <select value={difficulty} onChange={onDifficultySelect} >
-                        <option value={difficultyOptions.easy}>Easy</option>
-                        <option value={difficultyOptions.average}>Avg</option>
-                        <option value={difficultyOptions.hard}>Hard</option>
-                        <option value={difficultyOptions.veryHard}>Harder</option>
-                        <option value={difficultyOptions.crazy}>Crazy</option>
-                        <option value={difficultyOptions.insane}>Insane</option>
+                        <option value={'easy'}>Easy</option>
+                        <option value={'average'}>Average</option>
+                        <option value={'hard'}>Hard</option>
+                        <option value={'harder'}>Harder</option>
+                        <option value={'crazy'}>Crazy</option>
+                        <option value={'insane'}>Insane</option>
                     </select>
                 </div>
-            {!gameOver && (
+            {!gameOver && difficulty && (
                 <div className='input-field'>
                     <p>Range: {lowGuesses[0]} - {highGuesses[0]}</p>
+                    <p>Target: {targetGuesses.easy} Tries</p>
                     <p>{hint}</p>
                     <input
+                        autoFocus
                         className='number-input'
                         name="number-input"
                         type='text'
-                        autoFocus
                         placeholder='?'
                         value={currentGuess}
                         onChange={(event) => handleKeyPress(event)}
@@ -199,21 +244,7 @@ const selectedDifficulty = event.target.value
                     <button
                         onClick={reset}
                     ><div className='replay'>▶</div></button>
-                    {guesses === 0 && (
-                        <p>You did it in {guesses} try, amazing!</p>
-                    )}
-                    {guesses > 0 && guesses < 3 &&(
-                        <p>You did it in {guesses} tries, nice!</p>
-                    )}
-                    {guesses >= 3 && guesses < 12 &&(
-                        <p>You did it in {guesses} tries, not bad.</p>
-                    )}
-                    {guesses >= 12 &&(
-                        <>
-                        <p>{guesses} tries!? That took forever!</p>
-                        <p>I wonder if you need a better strategy...</p>
-                        </>
-                    )}
+                    <p>{selectVictoryMessage()}</p>
                 </div>
             )}
         </div>
