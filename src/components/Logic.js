@@ -22,6 +22,7 @@ function Logic() {
         insane: 1000000,
     }
 
+    // TODO: calculate victoryMessage based on % away from target guesses on current difficulty
     const targetGuesses = {
         easy: 3, // default
         average: 6,
@@ -34,25 +35,30 @@ function Logic() {
     const victoryMessages = {
         firstTry: `Amazing! You nailed it in 1 try!`,
         excellent: `Impressive! You guessed it in ${guesses} tries.`,
-        good: `Good guessing! You got it in ${guesses} tries.`,
+        good: `You got it in ${guesses} tries, just as expected`,
         average: `${guesses} tries, not bad! But try to take more risks.`,
-        poor: `Yipes, ${guesses} guesses is a bit rough.`,
-        terrible: `Have you no strategy!? ${guesses} guesses takes forever!`,
+        poor: `Well, ${guesses} guesses isn't that bad.`,
+        bad: `${guesses} guesses...let's step it up a bit.`,
+        terrible: `${guesses} guesses? Have you no strategy! Better try again.`,
     }
 
     const selectVictoryMessage = () => {
-        if (guesses === targetGuesses) {
+        const guessesToTarget = guesses / targetGuesses[difficulty]
+        console.log('guesses / targetGuesses[difficulty]: ', guesses / targetGuesses[difficulty])
+        if (guessesToTarget < 0.9) {
+            return victoryMessages.excellent
+        } else if (guessesToTarget >= 0.9 && guessesToTarget < 1) {
+            return victoryMessages.good
+        } else if (guessesToTarget === 1) {
             return victoryMessages.average
+        } else if (guessesToTarget > 1 && guessesToTarget <= 1.1) {
+            return victoryMessages.poor
+        } else if (guessesToTarget > 1.1 && guessesToTarget <= 1.4) {
+            return victoryMessages.bad
+        } else if (guessesToTarget > 1.4) {
+            return victoryMessages.terrible
         } else if (guesses === 1) {
             return victoryMessages.firstTry
-        } else if (guesses > 1 && guesses < 3) {
-            return victoryMessages.excellent
-        } else if (guesses >= 3 && guesses < 5) {
-            return victoryMessages.good
-        } else if (guesses >= 5 && guesses < 12) {
-            return victoryMessages.poor
-        } else if (guesses >= 12) {
-            return victoryMessages.terrible
         }
     }
 
@@ -208,20 +214,20 @@ function Logic() {
                 )}
                 </h1>
             </div>
-                <div className='difficulty'>
-                    <select value={difficulty} onChange={onDifficultySelect} >
-                        <option value={'easy'}>Easy</option>
-                        <option value={'average'}>Average</option>
-                        <option value={'hard'}>Hard</option>
-                        <option value={'harder'}>Harder</option>
-                        <option value={'crazy'}>Crazy</option>
-                        <option value={'insane'}>Insane</option>
-                    </select>
-                </div>
+            <div className='difficulty'>
+                <select value={difficulty} onChange={onDifficultySelect} >
+                    <option value={'easy'}>Easy</option>
+                    <option value={'average'}>Average</option>
+                    <option value={'hard'}>Hard</option>
+                    <option value={'harder'}>Harder</option>
+                    <option value={'crazy'}>Crazy</option>
+                    <option value={'insane'}>Insane</option>
+                </select>
+            </div>
             {!gameOver && difficulty && (
                 <div className='input-field'>
                     <p>Range: {lowGuesses[0]} - {highGuesses[0]}</p>
-                    <p>Target: {targetGuesses.easy} Tries</p>
+                    <p>Target: {targetGuesses[difficulty]} Tries</p>
                     <p>{hint}</p>
                     <input
                         autoFocus
