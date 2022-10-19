@@ -80,6 +80,27 @@ input {
   border-color: rgb(153, 255, 0);
 }
 
+.range-indicator-container {
+  display: flex;
+  justify-content: center;
+}
+
+.low-guess {
+  font-weight: bold;
+  margin: 5px;
+}
+
+.guess-indicator {
+  background-color: red;
+  width: 50%;
+}
+
+.high-guess {
+  font-weight: bold;
+  margin: 5px;
+}
+
+
 select {
   color: #eaf1fd;
   height: 25px;
@@ -93,9 +114,20 @@ select {
   border: none;
 }
 
+.target-guesses {
+  margin: 0 15px 0 15px;
+  font-size: 30px;
+  overflow: auto;
+  word-break: break-all;
+}
+
 .green {
   color: rgb(153, 255, 0);
   transition: color 1.5s ease-out;
+}
+
+.grey {
+  color: #939ba8;
 }
 
 .red {

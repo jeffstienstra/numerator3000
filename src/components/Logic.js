@@ -36,7 +36,7 @@ function Logic() {
         firstTry: `Amazing! You nailed it in 1 try!`,
         excellent: `Impressive! You guessed it in ${guesses} tries.`,
         good: `You got it in ${guesses} tries, just as expected`,
-        average: `${guesses} tries, not bad! But try to take more risks.`,
+        average: `${guesses}'s not bad. But try to take more risks.`,
         poor: `Well, ${guesses} guesses isn't that bad.`,
         bad: `${guesses} guesses...let's step it up a bit.`,
         terrible: `${guesses} guesses? Have you no strategy! Better try again.`,
@@ -87,9 +87,8 @@ function Logic() {
 
                 // Number(currentGuess).toLocaleString("en-US")
                 setCurrentGuess(event.target.value) // if keypress is a number set its value to currentGuess
-            } else {
+            } else if (!gameOver) {
                 setFooter(`* numbers only`)
-                // console.log('currentGuess: ', currentGuess)
             }
 
         }, [currentGuess] // eslint-disable-line react-hooks/exhaustive-deps
@@ -145,19 +144,12 @@ function Logic() {
         console.log('4. difficultyOptions.hard: ', difficultyOptions.hard)
 
         setDifficulty(selectedDifficulty)
-
         createSecretNumber(difficultyOptions[selectedDifficulty])
-
         initializeHighLowGuesses(selectedDifficulty)
-
         setCurrentGuess('')
-
         setFooter('')
-
         setGameOver(false)
-
         setHint(`What's my number?`)
-
         setGuesses(0)
     }
 
@@ -190,14 +182,9 @@ function Logic() {
     }, [handleKeyPress]);  // eslint-disable-line react-hooks/exhaustive-deps
 
 
+    // Generate initial secret number
     useEffect(() => {
-        // Generate initial secret number
         createSecretNumber()
-        // console.log('useEffect: difficulty', difficulty)
-        // console.log('useEffect: targetGuesses.difficulty', targetGuesses.difficulty)
-        // console.log('useEffect: targetGuesses.easy', targetGuesses.easy)
-
-        // console.log('useEffect: difficultyOptions.easy', difficultyOptions.easy)
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
@@ -209,9 +196,9 @@ function Logic() {
                         <span className={((!gameOver && guesses < 2)) || gameOver ? 'green' : 'red'}>◉</span>
                         <span className={((!gameOver && guesses < 3)) || gameOver ? 'green' : 'red'}>◉</span>
                     </>
-                {guesses > 3 && (
+                {/* {guesses > 3 && (
                     [...Array(guesses - 3)].map((span, i) => <span className={!gameOver ? 'red' : 'green'} key={i}>◉</span>)
-                )}
+                )} */}
                 </h1>
             </div>
             <div className='difficulty'>
@@ -224,33 +211,55 @@ function Logic() {
                     <option value={'insane'}>Insane</option>
                 </select>
             </div>
-            {!gameOver && difficulty && (
                 <div className='input-field'>
-                    <p>Range: {lowGuesses[0]} - {highGuesses[0]}</p>
-                    <p>Target: {targetGuesses[difficulty]} Tries</p>
-                    <p>{hint}</p>
-                    <input
-                        autoFocus
-                        className='number-input'
-                        name="number-input"
-                        type='text'
-                        placeholder='?'
-                        value={currentGuess}
-                        onChange={(event) => handleKeyPress(event)}
-                        />
-                    <p className='error'>{footer}</p>
-                    {guesses > 0 && (
-                        <p>Attemps: {guesses}</p>
+                {!gameOver && difficulty && (
+                    <div>
+                        <p>Range</p>
+                        <div className="range-indicator-container">
+                            <div className='low-guess'>{lowGuesses[0]}</div>
+                            <div className='range-indicator'></div>
+                            <div className='high-guess'>{highGuesses[0]}</div>
+                        </div>
+                    </div>
+                )}
+                    <p>Target Guesses</p>
+                    <div className='target-guesses'>
+                        {guesses > 0 && (
+                            [...Array(guesses)].map((span, i) => <span className='red' key={i}>◉</span>)
+                        )}
+                        {(targetGuesses[difficulty] - guesses > 0) && (
+                            [...Array(targetGuesses[difficulty] - guesses)].map((span, i) => <span className='grey' key={i}>◉</span>)
+                        )}
+                    </div>
+                    {!gameOver && difficulty && (
+                        <>
+                            <p>{hint}</p>
+                            <input
+                                autoFocus
+                                className='number-input'
+                                name="number-input"
+                                type='text'
+                                placeholder='?'
+                                value={currentGuess}
+                                onChange={(event) => handleKeyPress(event)}
+                                />
+                            <p className='error'>{footer}</p>
+                        </>
                     )}
+                    {guesses > 0 && (
+                        <p>Guesses: {guesses}</p>
+                    )}
+                    {gameOver && (
+                        <p>{selectVictoryMessage()}</p>
+                    )}
+
                 </div>
-            )}
             {gameOver && (
                 <div className='replay-button'>
                     <p>{Number(currentGuess).toLocaleString()} is correct</p>
                     <button
                         onClick={reset}
                     ><div className='replay'>▶</div></button>
-                    <p>{selectVictoryMessage()}</p>
                 </div>
             )}
         </div>
