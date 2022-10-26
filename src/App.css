@@ -1,4 +1,9 @@
 
+:root {
+  --too-low-percentage: 0%;
+  --too-high-percentage: 0%;
+}
+
 .App {
   text-align: center;
   color: #eaf1fd;
@@ -41,12 +46,16 @@ input {
   caret-color: rgb(153, 255, 0);
 }
 
+.difficulty {
+  margin-bottom: 25px;
+}
+
 .label {
   margin-bottom: -6px;
 }
 
 .input-field {
-  margin-top: 25px;
+  margin-top: 15px;
 }
 
 .replay-button {
@@ -83,21 +92,54 @@ input {
 .range-indicator-container {
   display: flex;
   justify-content: center;
+  margin-top: 10px;
+}
+
+.range-container {
+  margin-bottom: 25px;
+}
+
+.range-indicator {
+  display: flex;
+  width: 34%;
+  /* background-color: green; */
+  border-radius: 5px;
 }
 
 .low-guess {
+  width: 33%;
+  margin: 0 5px 0 0;
   font-weight: bold;
-  margin: 5px;
+  text-align: right;
+  font-size: 18px;
 }
 
-.guess-indicator {
-  background-color: red;
-  width: 50%;
+.too-low {
+  width: var(--too-low-percentage);
+  /* width: 25%; */
+  background-color: #5f2b2b;
+  border-radius: 5px 0 0 5px;
+}
+
+.green-zone {
+  min-width: 1%;
+  width: calc(100% - (var(--too-low-percentage) + var(--too-high-percentage)));
+  background-color: rgb(153, 255, 0);
+  border-radius: 5px;
+}
+.too-high {
+  width: var(--too-high-percentage);
+  /* width: 25%; */
+  background-color: #5f2b2b;
+  border-radius: 0 5px 5px 0;
 }
 
 .high-guess {
+  width: 33%;
+  margin: 0 0 0 5px;
   font-weight: bold;
-  margin: 5px;
+  text-align: left;
+  font-size: 18px;
 }
 
 
@@ -114,8 +156,18 @@ select {
   border: none;
 }
 
+.target-guesses-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
 .target-guesses {
+  /* TODO: fix centering when only 5 icons per row */
+  /* display: flex; */
+  /* justify-content: center; */
   margin: 0 15px 0 15px;
+  width: 150px;
   font-size: 30px;
   overflow: auto;
   word-break: break-all;
