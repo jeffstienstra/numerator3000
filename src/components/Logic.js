@@ -1,4 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
+import DifficultyDropdown from './DifficultyDropdown'
+import GameOver from './GameOver'
+import InputField from './InputField'
+import RangeIndicator from './RangeIndicator'
+import TargetGuesses from './TargetGuesses'
+import Title from './Title'
 
 function Logic() {
 
@@ -33,7 +39,7 @@ function Logic() {
 
     const victoryMessages = {
         firstTry: `Amazing! You nailed it in 1 try!`,
-        excellent: `Impressive! You guessed it in ${guesses} tries.`,
+        excellent: `Impressive! You guessed it in only ${guesses} tries.`,
         good: `You got it in ${guesses} tries, just as expected`,
         average: `${guesses}'s not bad. But try to take more risks.`,
         poor: `Well, ${guesses} guesses isn't that bad.`,
@@ -43,7 +49,9 @@ function Logic() {
 
     const selectVictoryMessage = () => {
         const guessesToTarget = guesses / targetGuesses[difficulty]
-        if (guessesToTarget < 0.9) {
+        if (guesses === 1) {
+            return victoryMessages.firstTry
+        } else if (guessesToTarget < 0.9) {
             return victoryMessages.excellent
         } else if (guessesToTarget >= 0.9 && guessesToTarget < 1) {
             return victoryMessages.good
@@ -62,8 +70,6 @@ function Logic() {
 
     // Call this function to create a new randomly generated secret number
     const createSecretNumber = (selectedDifficulty) => {
-        console.log('6. selectedDifficulty value', selectedDifficulty)
-        console.log('7. difficultyOptions[selectedDifficulty]', difficultyOptions[selectedDifficulty])
         const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy
         const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
 
@@ -93,14 +99,14 @@ function Logic() {
     )
 
     const setRangeStyle = (style, value) => {
-        console.log('setRange value: ', value)
+        // console.log('setRange value: ', value)
 
         // Guess is highest value in range, so show a little inidicator
         if (value === 'MAX') {
-            console.log('setRange IF BLOCK: ', value)
+            // console.log('setRange IF BLOCK: ', value)
             document.documentElement.style.setProperty('--too-high-percentage', '5%')
         } else if (value === 'RESET') {
-            console.log('setRange IF ELSE BLOCK: ', value)
+            // console.log('setRange IF ELSE BLOCK: ', value)
             document.documentElement.style.setProperty('--too-low-percentage', '0%')
             document.documentElement.style.setProperty('--too-high-percentage', '0%')
         } else {
@@ -142,8 +148,8 @@ function Logic() {
             // selectVictoryMessage()
 
         } else if (currentGuess < secretNumber) {
-            setLowIndicatorValues(currentGuess)
             setHint(`${currentGuess} is too low`)
+            setLowIndicatorValues(currentGuess)
             setGuesses(guesses + 1)
             const lowGuessesSorted = ([...lowGuesses, currentGuess].sort((a, b) => {return b-a}))
             setLowGuesses(lowGuessesSorted)
@@ -154,7 +160,6 @@ function Logic() {
             setHint(`${currentGuess} is too high`)
             setGuesses(guesses + 1)
             const highGuessesSorted = [...highGuesses, currentGuess].sort((a, b) => {return a-b})
-            console.log('highGuessesSorted: ', highGuessesSorted)
             setHighGuesses(highGuessesSorted)
             setHighIndicatorValues(highGuessesSorted[0])
             clearInputField()
@@ -162,17 +167,16 @@ function Logic() {
     }
 
     const initializeHighLowGuesses = (selectedDifficulty) => {
-        console.log('5. selectedDifficulty: ', selectedDifficulty)
         setLowGuesses([1])
         setHighGuesses(selectedDifficulty ? [difficultyOptions[selectedDifficulty]] : [difficultyOptions.easy])
     }
 
     const onDifficultySelect = (event) => {
         const selectedDifficulty = event.target.value
-        console.log('1. event.target.value: ', event.target.value)
-        console.log('2. selectedDifficulty: ', selectedDifficulty)
-        console.log('3. difficultyOptions.value: ', difficultyOptions[selectedDifficulty])
-        console.log('4. difficultyOptions.hard: ', difficultyOptions.hard)
+        // console.log('1. event.target.value: ', event.target.value)
+        // console.log('2. selectedDifficulty: ', selectedDifficulty)
+        // console.log('3. difficultyOptions.value: ', difficultyOptions[selectedDifficulty])
+        // console.log('4. difficultyOptions.hard: ', difficultyOptions.hard)
 
         setDifficulty(selectedDifficulty)
         createSecretNumber(difficultyOptions[selectedDifficulty])
@@ -224,88 +228,49 @@ function Logic() {
 
     return (
         <div className='logic'>
-            <div>
-                <h1 className='green'>NUMERATOR | 3
-                    <>
-                        <span className={((!gameOver && guesses < 1)) || gameOver ? 'green' : 'red'}>◉</span>
-                        <span className={((!gameOver && guesses < 2)) || gameOver ? 'green' : 'red'}>◉</span>
-                        <span className={((!gameOver && guesses < 3)) || gameOver ? 'green' : 'red'}>◉</span>
-                    </>
-                {/* {guesses > 3 && (
-                    [...Array(guesses - 3)].map((span, i) => <span className={!gameOver ? 'red' : 'green'} key={i}>◉</span>)
-                )} */}
-                </h1>
-            </div>
-            <div className='difficulty'>
-                <select value={difficulty} onChange={onDifficultySelect} >
-                    <option value={'easy'}>Easy</option>
-                    <option value={'average'}>Average</option>
-                    <option value={'hard'}>Hard</option>
-                    <option value={'harder'}>Harder</option>
-                    <option value={'crazy'}>Crazy</option>
-                    <option value={'insane'}>Insane</option>
-                </select>
-            </div>
-            {!gameOver && (
-                <>
-                    <p>Target Guesses</p>
-                    <div className='target-guesses-container'>
-                        <div className='target-guesses'>
-                            {guesses > 0 && (
-                                [...Array(guesses)].map((span, i) => <span className='red' key={i}>◉</span>)
-                            )}
-                            {(targetGuesses[difficulty] - guesses > 0) && (
-                                [...Array(targetGuesses[difficulty] - guesses)].map((span, i) => <span className='grey' key={i}>◉</span>)
-                            )}
-                        </div>
-                    </div>
-                </>
-            )}
-            <div className='input-field'>
-            {!gameOver && difficulty && (
-                <div className='range-container'>
-                    <p>Range: 1 - {difficultyOptions[difficulty]}</p>
-                    <div className='range-indicator-container'>
-                        <div className='low-guess'>{lowGuesses[0]} &#60;</div>
-                        <div className='range-indicator'>
-                            <div className='too-low'></div>
-                            <div className='green-zone' id='green-zone'></div>
-                            <div className='too-high' id='too-high'></div>
-                        </div>
-                        <div className='high-guess'>&#60; {highGuesses[0]}</div>
-                    </div>
-                </div>
-            )}
-            {!gameOver && difficulty && (
-                <>
-                    <p>{hint}</p>
-                    <input
-                        autoFocus
-                        className='number-input'
-                        name='number-input'
-                        type='text'
-                        placeholder='?'
-                        value={currentGuess}
-                        onChange={(event) => handleKeyPress(event)}
-                        />
-                    <p className='error'>{footer}</p>
-                </>
-            )}
-            {guesses > 0 && (
-                <p>Guesses: {guesses}</p>
-            )}
-            {gameOver && (
-                <p>{selectVictoryMessage()}</p>
-            )}
-            </div>
-            {gameOver && (
-                <div className='replay-button'>
-                    <p>{Number(currentGuess).toLocaleString()} is correct</p>
-                    <button
-                        onClick={reset}
-                    ><div className='replay'>▶</div></button>
-                </div>
-            )}
+
+            <Title
+                gameOver={gameOver}
+                guesses={guesses}
+            />
+{/*
+            <DifficultyDropdown
+                difficulty={difficulty}
+                onDifficultySelect={onDifficultySelect}
+            />
+
+            <TargetGuesses
+                gameOver={gameOver}
+                guesses={guesses}
+                targetGuesses={targetGuesses}
+                difficulty={difficulty}
+            />
+
+            <RangeIndicator
+                gameOver={gameOver}
+                difficulty={difficulty}
+                difficultyOptions={difficultyOptions}
+                lowGuesses={lowGuesses}
+                highGuesses={highGuesses}
+            /> */}
+
+            <InputField
+                gameOver={gameOver}
+                difficulty={difficulty}
+                hint={hint}
+                currentGuess={currentGuess}
+                handleKeyPress={handleKeyPress}
+                footer={footer}
+
+            />
+
+            <GameOver
+                guesses={guesses}
+                selectVictoryMessage={selectVictoryMessage}
+                gameOver={gameOver}
+                currentGuess={currentGuess}
+                reset={reset}
+            />
         </div>
     )
 }

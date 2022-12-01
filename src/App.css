@@ -4,14 +4,12 @@
   --too-high-percentage: 0%;
 }
 
-.App {
+.body {
   text-align: center;
   color: #eaf1fd;
-}
-
-.App-header {
   background-image: linear-gradient( #515a6a,#1e2128);
   min-height: 100vh;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
   font-size: calc(10px + 2vmin);

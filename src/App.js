@@ -4,9 +4,9 @@ import Logic from './components/Logic';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-      <Logic />
-      </header>
+      <div className="body">
+        <Logic />
+      </div>
     </div>
   );
 }
