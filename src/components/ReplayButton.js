@@ -1,6 +1,6 @@
 import React from 'react'
 
-function ReplayButton({gameOver, currentGuess, reset}) {
+function ReplayButton({gameOver, reset}) {
     return (
         <>
             {gameOver && (

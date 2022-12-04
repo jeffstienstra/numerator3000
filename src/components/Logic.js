@@ -8,7 +8,6 @@ import TargetGuesses from './TargetGuesses'
 import Title from './Title'
 
 function Logic() {
-
     const [currentGuess, setCurrentGuess] = useState('')
     const [difficulty, setDifficulty] = useState('easy')
     const [footer, setFooter] = useState('')
@@ -18,6 +17,15 @@ function Logic() {
     const [lowGuesses, setLowGuesses] = useState(['1'])
     const [guesses, setGuesses] = useState(0);
     const [secretNumber, setSecretNumber] = useState(undefined)
+
+    // Call this function to create a new randomly generated secret number
+    function createSecretNumber(selectedDifficulty) {
+        const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy
+        const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
+
+        console.log('secretNumber: ', secretNumber)
+        setSecretNumber(secretNumber);
+    }
 
     const difficultyOptions = {
         easy: 10, // default
@@ -73,15 +81,6 @@ function Logic() {
         }
     }
 
-    // Call this function to create a new randomly generated secret number
-    function createSecretNumber(selectedDifficulty) {
-        const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy
-        const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
-
-        console.log('secretNumber: ', secretNumber)
-        setSecretNumber(secretNumber);
-    }
-
     const handleKeyPress = useCallback(
         (event) => {
             // What is a web browser 'event' anyway?
@@ -106,7 +105,7 @@ function Logic() {
         // Guess is highest value in range, so show a little inidicator
         const element = document.documentElement.style;
         if (value === 'MAX') {
-            element.setProperty('--too-high-percentage', '5%')
+            element.setProperty('--too-high-percentage', '2%')
         } else if (value === 'RESET') {
             element.setProperty('--too-low-percentage', '0%')
             element.setProperty('--too-high-percentage', '0%')
@@ -180,13 +179,13 @@ function Logic() {
         // console.log('4. difficultyOptions.hard: ', difficultyOptions.hard)
 
         setDifficulty(selectedDifficulty)
-        createSecretNumber(difficultyOptions[selectedDifficulty])
-        initializeHighLowGuesses(selectedDifficulty)
         setCurrentGuess('')
         setFooter('')
         setGameOver(false)
         setHint(`What's my number?`)
         setGuesses(0)
+        createSecretNumber(difficultyOptions[selectedDifficulty])
+        initializeHighLowGuesses(selectedDifficulty)
         setRangeStyle('--too-low-percentage', 'RESET')
         setRangeStyle('--too-high-percentage', 'RESET')
     }
@@ -199,7 +198,7 @@ function Logic() {
         setHint(`What's my number?`)
         setGuesses(0)
         createSecretNumber(difficultyOptions[difficulty]);
-        initializeHighLowGuesses()
+        initializeHighLowGuesses(difficulty)
         setRangeStyle('--too-low-percentage', 'RESET')
         setRangeStyle('--too-high-percentage', 'RESET')
     }
@@ -208,7 +207,7 @@ function Logic() {
         // Check if the user presses the Space bar during the game and disable it
         document.addEventListener('keydown', handleKeyPress);
 
-        // While game is not over, don't allow space button to be pressed
+        // While game is not over, prevent default input of space bar
         var field = document.querySelector('[name="number-input"]');
         !gameOver && field.addEventListener('keypress', function ( event ) {
             if (event.keyCode === 32) {
@@ -239,25 +238,6 @@ function Logic() {
                 difficulty={difficulty}
                 onDifficultySelect={onDifficultySelect}
             />
-            {!gameOver && (
-                <>
-                    <TargetGuesses
-                        gameOver={gameOver}
-                        guesses={guesses}
-                        targetGuesses={targetGuesses}
-                        difficulty={difficulty}
-                    />
-
-                    <RangeIndicator
-                        gameOver={gameOver}
-                        difficulty={difficultyOptions[difficulty]}
-                        // difficultyOptions={difficultyOptions}
-                        lowGuesses={lowGuesses}
-                        highGuesses={highGuesses}
-                    />
-                </>
-            )}
-
 
             <InputField
                 gameOver={gameOver}
@@ -268,19 +248,36 @@ function Logic() {
                 footer={footer}
             />
 
-            <GameOverMessage
-                guesses={guesses}
-                selectVictoryMessage={selectVictoryMessage}
-                gameOver={gameOver}
-                currentGuess={currentGuess}
-                reset={reset}
-            />
+            {!gameOver && (
+                <>
 
-            <ReplayButton
-                currentGuess={currentGuess}
-                gameOver={gameOver}
-                reset={reset}
-            />
+                    <RangeIndicator
+                        difficulty={difficultyOptions[difficulty]}
+                        lowGuesses={lowGuesses}
+                        highGuesses={highGuesses}
+                    />
+                    <TargetGuesses
+                        gameOver={gameOver}
+                        guesses={guesses}
+                        targetGuesses={targetGuesses}
+                        difficulty={difficulty}
+                    />
+                </>
+            )}
+            {gameOver && (
+                <>
+                    <GameOverMessage
+                        selectVictoryMessage={selectVictoryMessage}
+                        gameOver={gameOver}
+                        currentGuess={currentGuess}
+                    />
+
+                    <ReplayButton
+                        gameOver={gameOver}
+                        reset={reset}
+                    />
+                </>
+            )}
         </div>
     )
 }

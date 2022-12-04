@@ -1,13 +1,11 @@
 import React from 'react'
 
-function GameOverMessage({guesses, selectVictoryMessage, gameOver, currentGuess, reset}) {
+function GameOverMessage({selectVictoryMessage, gameOver, currentGuess}) {
     return (
         <>
             {gameOver && (
                 <>
-                    <div>
-                        <p>{Number(currentGuess).toLocaleString()} is correct!</p>
-                    </div>
+                    <p>{Number(currentGuess).toLocaleString()} is correct!</p>
                     <p>{selectVictoryMessage()}</p>
                 </>
             )}
