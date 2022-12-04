@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback } from 'react'
 import DifficultyDropdown from './DifficultyDropdown'
-import GameOver from './GameOver'
+import GameOverMessage from './GameOverMessage'
 import InputField from './InputField'
 import RangeIndicator from './RangeIndicator'
+import ReplayButton from './ReplayButton'
 import TargetGuesses from './TargetGuesses'
 import Title from './Title'
 
@@ -27,7 +28,6 @@ function Logic() {
         insane: 1000000,
     }
 
-    // TODO: calculate victoryMessage based on % away from target guesses on current difficulty
     const targetGuesses = {
         easy: 3, // default
         average: 6,
@@ -41,27 +41,32 @@ function Logic() {
         firstTry: `Amazing! You nailed it in 1 try!`,
         excellent: `Impressive! You guessed it in only ${guesses} tries.`,
         good: `You got it in ${guesses} tries, just as expected`,
-        average: `${guesses}'s not bad. But try to take more risks.`,
-        poor: `Well, ${guesses} guesses isn't that bad.`,
-        bad: `${guesses} guesses...let's step it up a bit.`,
-        terrible: `${guesses} guesses? Have you no strategy! Better try again.`,
+        average: `${guesses} tries isn't bad. But try to take more risks.`,
+        poor: `Well, ${guesses} tries isn't that bad.`,
+        bad: `${guesses} tries...let's step it up a bit.`,
+        terrible: `${guesses} tries? Have you no strategy!? Better try again.`,
     }
 
     const selectVictoryMessage = () => {
-        const guessesToTarget = guesses / targetGuesses[difficulty]
+        // Calculate how far above or below the target guesses we were.
+        const guessAccuracy = guesses / targetGuesses[difficulty]
+
+        //   If the target is 10 guesses but we solve it in 8 guesses,
+        //   our guess accuracy is 20% below the target, so based on the following
+        //   if/else statements, which message would we receive?
         if (guesses === 1) {
             return victoryMessages.firstTry
-        } else if (guessesToTarget < 0.9) {
+        } else if (guessAccuracy < 0.9) {
             return victoryMessages.excellent
-        } else if (guessesToTarget >= 0.9 && guessesToTarget < 1) {
+        } else if (guessAccuracy >= 0.9 && guessAccuracy < 1) {
             return victoryMessages.good
-        } else if (guessesToTarget === 1) {
+        } else if (guessAccuracy === 1) {
             return victoryMessages.average
-        } else if (guessesToTarget > 1 && guessesToTarget <= 1.1) {
+        } else if (guessAccuracy > 1 && guessAccuracy <= 1.1) {
             return victoryMessages.poor
-        } else if (guessesToTarget > 1.1 && guessesToTarget <= 1.4) {
+        } else if (guessAccuracy > 1.1 && guessAccuracy <= 1.4) {
             return victoryMessages.bad
-        } else if (guessesToTarget > 1.4) {
+        } else if (guessAccuracy > 1.4) {
             return victoryMessages.terrible
         } else if (guesses === 1) {
             return victoryMessages.firstTry
@@ -69,7 +74,7 @@ function Logic() {
     }
 
     // Call this function to create a new randomly generated secret number
-    const createSecretNumber = (selectedDifficulty) => {
+    function createSecretNumber(selectedDifficulty) {
         const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy
         const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
 
@@ -88,8 +93,6 @@ function Logic() {
             }
 
             if (isFinite(event.target.value)) { // verify presed key is a number
-
-                // Number(currentGuess).toLocaleString('en-US')
                 setCurrentGuess(event.target.value) // if keypress is a number set its value to currentGuess
             } else if (!gameOver) {
                 setFooter(`* numbers only`)
@@ -99,18 +102,16 @@ function Logic() {
     )
 
     const setRangeStyle = (style, value) => {
-        // console.log('setRange value: ', value)
 
         // Guess is highest value in range, so show a little inidicator
+        const element = document.documentElement.style;
         if (value === 'MAX') {
-            // console.log('setRange IF BLOCK: ', value)
-            document.documentElement.style.setProperty('--too-high-percentage', '5%')
+            element.setProperty('--too-high-percentage', '5%')
         } else if (value === 'RESET') {
-            // console.log('setRange IF ELSE BLOCK: ', value)
-            document.documentElement.style.setProperty('--too-low-percentage', '0%')
-            document.documentElement.style.setProperty('--too-high-percentage', '0%')
+            element.setProperty('--too-low-percentage', '0%')
+            element.setProperty('--too-high-percentage', '0%')
         } else {
-            document.documentElement.style.setProperty(style, (value * difficultyOptions[difficulty]) < secretNumber
+            element.setProperty(style, (value * difficultyOptions[difficulty]) < secretNumber
                 ? `${Math.round(value * 100)}%`
                 : `${Math.round(100 - (value * 100))}%`);
         }
@@ -233,26 +234,30 @@ function Logic() {
                 gameOver={gameOver}
                 guesses={guesses}
             />
-{/*
+
             <DifficultyDropdown
                 difficulty={difficulty}
                 onDifficultySelect={onDifficultySelect}
             />
+            {!gameOver && (
+                <>
+                    <TargetGuesses
+                        gameOver={gameOver}
+                        guesses={guesses}
+                        targetGuesses={targetGuesses}
+                        difficulty={difficulty}
+                    />
 
-            <TargetGuesses
-                gameOver={gameOver}
-                guesses={guesses}
-                targetGuesses={targetGuesses}
-                difficulty={difficulty}
-            />
+                    <RangeIndicator
+                        gameOver={gameOver}
+                        difficulty={difficultyOptions[difficulty]}
+                        // difficultyOptions={difficultyOptions}
+                        lowGuesses={lowGuesses}
+                        highGuesses={highGuesses}
+                    />
+                </>
+            )}
 
-            <RangeIndicator
-                gameOver={gameOver}
-                difficulty={difficulty}
-                difficultyOptions={difficultyOptions}
-                lowGuesses={lowGuesses}
-                highGuesses={highGuesses}
-            /> */}
 
             <InputField
                 gameOver={gameOver}
@@ -261,14 +266,19 @@ function Logic() {
                 currentGuess={currentGuess}
                 handleKeyPress={handleKeyPress}
                 footer={footer}
-
             />
 
-            <GameOver
+            <GameOverMessage
                 guesses={guesses}
                 selectVictoryMessage={selectVictoryMessage}
                 gameOver={gameOver}
                 currentGuess={currentGuess}
+                reset={reset}
+            />
+
+            <ReplayButton
+                currentGuess={currentGuess}
+                gameOver={gameOver}
                 reset={reset}
             />
         </div>
