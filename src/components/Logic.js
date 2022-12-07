@@ -46,13 +46,13 @@ function Logic() {
     }
 
     const victoryMessages = {
-        firstTry: `Amazing! You nailed it in 1 try!`,
-        excellent: `Impressive, you guessed it in only ${guesses} tries!`,
-        good: `${guesses} tries isn't bad. But try to take more risks.`,
-        average: `You got it in ${guesses} tries, just as expected.`,
-        poor: `Well, ${guesses} tries isn't that bad.`,
-        bad: `${guesses} tries...let's step it up a bit.`,
-        terrible: `${guesses} tries? Have you no strategy!? Better try again.`,
+        firstTry: `Amazing! You nailed it in 1 try! The target was ${targetGuesses[difficulty]}.`,
+        excellent: `Impressive, you guessed it in only ${guesses} tries! The target was ${targetGuesses[difficulty]}.`,
+        good: `${guesses} tries isn't bad. But try to take more risks. The target was ${targetGuesses[difficulty]}.`,
+        average: `You got it in ${guesses} tries, just as expected. The target was ${targetGuesses[difficulty]}.`,
+        poor: `Well, ${guesses} tries isn't that bad. The target was ${targetGuesses[difficulty]}.`,
+        bad: `${guesses} tries...let's step it up a bit. The target was ${targetGuesses[difficulty]}.`,
+        terrible: `${guesses} tries?  The target was ${targetGuesses[difficulty]}! Have you no strategy!? Better try again.`,
     }
 
     const selectVictoryMessage = () => {
@@ -237,9 +237,15 @@ function Logic() {
                 onDifficultySelect={onDifficultySelect}
             />
 
-
             {!gameOver && (
                 <>
+                    <InputField
+                        hint={hint}
+                        currentGuess={currentGuess}
+                        handleKeyPress={handleKeyPress}
+                        footer={footer}
+                    />
+
                     <RangeIndicator
                         difficulty={difficultyOptions[difficulty]}
                         lowGuesses={lowGuesses}
@@ -252,13 +258,6 @@ function Logic() {
                         targetGuesses={targetGuesses}
                         difficulty={difficulty}
                     />
-
-                    <InputField
-                        hint={hint}
-                        currentGuess={currentGuess}
-                        handleKeyPress={handleKeyPress}
-                        footer={footer}
-                    />
                 </>
             )}
 
@@ -266,7 +265,6 @@ function Logic() {
                 <>
                     <GameOverMessage
                         selectVictoryMessage={selectVictoryMessage}
-                        gameOver={gameOver}
                         currentGuess={currentGuess}
                     />
 

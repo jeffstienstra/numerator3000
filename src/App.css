@@ -79,7 +79,7 @@ input {
 }
 
 .number-input {
-  height: 5rem;
+  height: 6rem;
   width: 20rem;
   text-align: center;
   margin-top: 5px;
@@ -91,8 +91,9 @@ input {
   border-style: groove;
   border-right-style: groove;
   border-bottom-style: groove;
-  padding-right: 0px;
-  margin-bottom: -1px;
+  /* padding-right: 0px; */
+  margin-bottom: -4px;
+  background-color: #202020;
   border-color: rgb(153, 255, 0);
   color: rgb(153, 255, 0);
 }
@@ -125,7 +126,7 @@ input {
 .too-low {
   width: var(--too-low-percentage);
   /* width: 25%; */
-  background-color: #5f2b2b;
+  background-color: #811e1e;
   border-radius: 5px 0 0 5px;
 }
 
@@ -138,7 +139,7 @@ input {
 .too-high {
   width: var(--too-high-percentage);
   /* width: 25%; */
-  background-color: #5f2b2b;
+  background-color: #811e1e;
   border-radius: 0 5px 5px 0;
 }
 
@@ -153,8 +154,8 @@ input {
 
 select {
   color: #eaf1fd;
-  height: 50px;
-  width: 140px;
+  height: 1.5em;
+  width: 5em;
   text-align: center;
   font-size: 1em;
   font-weight: bold;
@@ -201,4 +202,26 @@ button {
   background-color: #eaf1fd;
   border-radius: 10px;
   background-color: rgb(153, 255, 0);
+}
+
+button:hover {
+  background-color: rgb(122, 202, 1);
+  cursor: pointer;
+}
+
+button:hover .replay {
+  color: #000000;
+}
+
+button:focus {
+  background-color: rgb(122, 202, 1);
+  cursor: pointer;
+}
+
+button:focus .replay {
+  color: #000000;
+}
+
+.victory-message {
+  padding-top: 10px;
 }

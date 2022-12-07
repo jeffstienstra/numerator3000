@@ -1,14 +1,10 @@
 import React from 'react'
 
-function GameOverMessage({selectVictoryMessage, gameOver, currentGuess}) {
+function GameOverMessage({selectVictoryMessage, currentGuess}) {
     return (
         <>
-            {gameOver && (
-                <>
-                    <p>{Number(currentGuess).toLocaleString()} is correct!</p>
-                    <p>{selectVictoryMessage()}</p>
-                </>
-            )}
+            <p>{Number(currentGuess).toLocaleString()} is correct!</p>
+            <p className='victory-message'>{selectVictoryMessage()}</p>
         </>
     )
 }
