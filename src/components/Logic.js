@@ -47,9 +47,9 @@ function Logic() {
 
     const victoryMessages = {
         firstTry: `Amazing! You nailed it in 1 try!`,
-        excellent: `Impressive! You guessed it in only ${guesses} tries.`,
-        good: `You got it in ${guesses} tries, just as expected`,
-        average: `${guesses} tries isn't bad. But try to take more risks.`,
+        excellent: `Impressive, you guessed it in only ${guesses} tries!`,
+        good: `${guesses} tries isn't bad. But try to take more risks.`,
+        average: `You got it in ${guesses} tries, just as expected.`,
         poor: `Well, ${guesses} tries isn't that bad.`,
         bad: `${guesses} tries...let's step it up a bit.`,
         terrible: `${guesses} tries? Have you no strategy!? Better try again.`,
@@ -239,17 +239,15 @@ function Logic() {
                 onDifficultySelect={onDifficultySelect}
             />
 
-            <InputField
-                gameOver={gameOver}
-                difficulty={difficulty}
-                hint={hint}
-                currentGuess={currentGuess}
-                handleKeyPress={handleKeyPress}
-                footer={footer}
-            />
 
             {!gameOver && (
                 <>
+                    <InputField
+                        hint={hint}
+                        currentGuess={currentGuess}
+                        handleKeyPress={handleKeyPress}
+                        footer={footer}
+                    />
 
                     <RangeIndicator
                         difficulty={difficultyOptions[difficulty]}
@@ -264,6 +262,7 @@ function Logic() {
                     />
                 </>
             )}
+
             {gameOver && (
                 <>
                     <GameOverMessage

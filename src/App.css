@@ -4,10 +4,19 @@
   --too-high-percentage: 0%;
 }
 
+.title {
+margin: 20px 20px 30px 20px;
+}
+
 .body {
   text-align: center;
   color: #eaf1fd;
-  background-image: linear-gradient( #515a6a,#1e2128);
+  /* background-image: linear-gradient( #515a6a,#1e2128); */
+  background-image: url("../public/logo2.png");
+  height: 500px; /* You must set a specified height */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
   min-height: 100vh;
   min-width: 300px;
   display: flex;
@@ -17,7 +26,7 @@
 
 h1 {
   color: rgb(153, 255, 0);
-  margin: 15px;
+  /* margin: 15px; */
   overflow-wrap: breakword;
   word-wrap: break-word;
 }
@@ -25,8 +34,8 @@ h1 {
 p {
   margin: 0;
   margin-bottom: 3px;
-  padding: 0 25% 0 25%;
-  font-size: 18px;
+  padding: 0 20% 0 20%;
+  font-size: 1em;
   margin-top: 5px;
   font-weight: bold;
 }
@@ -45,7 +54,7 @@ input {
 }
 
 .difficulty {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .label {
@@ -53,7 +62,7 @@ input {
 }
 
 .input-field {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .replay-button {
@@ -94,7 +103,7 @@ input {
 }
 
 .range-container {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .range-indicator {
@@ -109,7 +118,7 @@ input {
   margin: 0 5px 0 0;
   font-weight: bold;
   text-align: right;
-  font-size: 18px;
+  font-size: 1em;
 }
 
 .too-low {
@@ -137,16 +146,16 @@ input {
   margin: 0 0 0 5px;
   font-weight: bold;
   text-align: left;
-  font-size: 18px;
+  font-size: 1em;
 }
 
 
 select {
   color: #eaf1fd;
-  height: 25px;
-  width: 90px;
+  height: 50px;
+  width: 140px;
   text-align: center;
-  font-size: 16px;
+  font-size: 1em;
   font-weight: bold;
   border-radius: 5px;
   background-color: #303235;
@@ -157,16 +166,13 @@ select {
 .target-guesses-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .target-guesses {
-  /* TODO: fix centering when only 5 icons per row */
-  /* display: flex; */
-  /* justify-content: center; */
   margin: 0 15px 0 15px;
-  width: 150px;
-  font-size: 30px;
+  width: 225px;
+  font-size: 1.5em;
   overflow: auto;
   word-break: break-all;
 }
@@ -186,8 +192,8 @@ select {
 }
 
 button {
-  height: 50px;
-  width: 75px;
+  height: 65px;
+  width: 110px;
   text-align: center;
   margin-bottom: 5px;
   font-size: 25px;
