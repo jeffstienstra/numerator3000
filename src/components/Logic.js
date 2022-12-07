@@ -76,8 +76,6 @@ function Logic() {
             return victoryMessages.bad
         } else if (guessAccuracy > 1.4) {
             return victoryMessages.terrible
-        } else if (guesses === 1) {
-            return victoryMessages.firstTry
         }
     }
 
@@ -242,23 +240,24 @@ function Logic() {
 
             {!gameOver && (
                 <>
-                    <InputField
-                        hint={hint}
-                        currentGuess={currentGuess}
-                        handleKeyPress={handleKeyPress}
-                        footer={footer}
-                    />
-
                     <RangeIndicator
                         difficulty={difficultyOptions[difficulty]}
                         lowGuesses={lowGuesses}
                         highGuesses={highGuesses}
                     />
+
                     <TargetGuesses
                         gameOver={gameOver}
                         guesses={guesses}
                         targetGuesses={targetGuesses}
                         difficulty={difficulty}
+                    />
+
+                    <InputField
+                        hint={hint}
+                        currentGuess={currentGuess}
+                        handleKeyPress={handleKeyPress}
+                        footer={footer}
                     />
                 </>
             )}
