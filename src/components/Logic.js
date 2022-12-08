@@ -25,10 +25,12 @@ function Logic() {
         // hard code the range
         const secretNumber = Math.floor(Math.random() * 10)
 
-        const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy || 10
+        // let the user select the range based on difficulty
+        // const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy || 10
         // const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
 
-        console.log(`secret number4: ${secretNumber}`)
+        // TODO: add a 'custom' field where you can allow the user to enter any number
+        console.log(`7823.${secretNumber}.9621`)
         setSecretNumber(secretNumber);
     }
 
