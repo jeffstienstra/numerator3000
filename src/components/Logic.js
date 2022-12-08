@@ -4,29 +4,35 @@ import GameOverMessage from './GameOverMessage'
 import InputField from './InputField'
 import RangeIndicator from './RangeIndicator'
 import ReplayButton from './ReplayButton'
+import QuoteButton from './QuoteButton'
 import TargetGuesses from './TargetGuesses'
 import Title from './Title'
 
 function Logic() {
     const [currentGuess, setCurrentGuess] = useState('')
     const [difficulty, setDifficulty] = useState('easy')
-    const [footer, setFooter] = useState('')
+    const [invalidInputFooter, setInvalidInputFooter] = useState('')
     const [gameOver, setGameOver] = useState(false)
     const [hint, setHint] = useState(`What's my number?`)
     const [highGuesses, setHighGuesses] = useState(['10'])
     const [lowGuesses, setLowGuesses] = useState(['1'])
     const [guesses, setGuesses] = useState(0);
     const [secretNumber, setSecretNumber] = useState(undefined)
+    const [victoryMessage, setVictoryMessage] = useState('')
 
     // Call this function to create a new randomly generated secret number
     function createSecretNumber(selectedDifficulty) {
-        const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy
-        const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
+        // hard code the range
+        const secretNumber = Math.floor(Math.random() * 10)
 
-        console.log('secretNumber: ', secretNumber)
+        const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy || 10
+        // const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
+
+        console.log(`secret number4: ${secretNumber}`)
         setSecretNumber(secretNumber);
     }
 
+    const customNumber = 562;
     const difficultyOptions = {
         easy: 10, // default
         average: 100,
@@ -34,6 +40,7 @@ function Logic() {
         harder: 10000,
         crazy: 100000,
         insane: 1000000,
+        custom: customNumber,
     }
 
     const targetGuesses = {
@@ -83,7 +90,10 @@ function Logic() {
         (event) => {
             // What is a web browser 'event' anyway?
             // console.log(`this is a browser keyPress event: `, event)
-            setFooter(``) // remove error text after each keypress
+
+            setCurrentGuess(event.target.value) // if keypress is a number set its value to currentGuess
+
+            setInvalidInputFooter(``) // remove error text after each keypress
 
             if (event.key === 'Enter') {
                 onEnter(event); // run the logic that checks if we guessed the right number
@@ -92,7 +102,7 @@ function Logic() {
             if (isFinite(event.target.value)) { // verify presed key is a number
                 setCurrentGuess(event.target.value) // if keypress is a number set its value to currentGuess
             } else if (!gameOver) {
-                setFooter(`* numbers only`)
+                setInvalidInputFooter(`* numbers only`)
             }
 
         }, [currentGuess] // eslint-disable-line react-hooks/exhaustive-deps
@@ -141,9 +151,10 @@ function Logic() {
 
         // Check if our current guess equals the secret number
         if(currentGuess.toString() === secretNumber.toString()) {
+            document.removeEventListener('keydown', handleKeyPress); // stop listening for keyboard input
             setGuesses(guesses + 1)
             setGameOver(true)
-            // selectVictoryMessage()
+            setVictoryMessage(selectVictoryMessage())
 
         } else if (currentGuess < secretNumber) {
             setHint(`${currentGuess} is too low`)
@@ -171,14 +182,9 @@ function Logic() {
 
     const onDifficultySelect = (event) => {
         const selectedDifficulty = event.target.value
-        // console.log('1. event.target.value: ', event.target.value)
-        // console.log('2. selectedDifficulty: ', selectedDifficulty)
-        // console.log('3. difficultyOptions.value: ', difficultyOptions[selectedDifficulty])
-        // console.log('4. difficultyOptions.hard: ', difficultyOptions.hard)
-
         setDifficulty(selectedDifficulty)
         setCurrentGuess('')
-        setFooter('')
+        setInvalidInputFooter('')
         setGameOver(false)
         setHint(`What's my number?`)
         setGuesses(0)
@@ -191,7 +197,7 @@ function Logic() {
     // Reset the game to default values
     const reset = () => {
         setCurrentGuess('')
-        setFooter('')
+        setInvalidInputFooter('')
         setGameOver(false)
         setHint(`What's my number?`)
         setGuesses(0)
@@ -205,7 +211,7 @@ function Logic() {
         // Check if the user presses the Space bar during the game and disable it
         document.addEventListener('keydown', handleKeyPress);
 
-        // While game is not over, prevent default input of space bar
+        // While game is not over, prevent the space bar's default input
         var field = document.querySelector('[name="number-input"]');
         !gameOver && field.addEventListener('keypress', function ( event ) {
             if (event.keyCode === 32) {
@@ -217,7 +223,6 @@ function Logic() {
             document.removeEventListener('keydown', handleKeyPress);
         };
     }, [handleKeyPress]);  // eslint-disable-line react-hooks/exhaustive-deps
-
 
     // Generate initial secret number
     useEffect(() => {
@@ -243,7 +248,7 @@ function Logic() {
                         hint={hint}
                         currentGuess={currentGuess}
                         handleKeyPress={handleKeyPress}
-                        footer={footer}
+                        invalidInputFooter={invalidInputFooter}
                     />
 
                     <RangeIndicator
@@ -264,14 +269,15 @@ function Logic() {
             {gameOver && (
                 <>
                     <GameOverMessage
-                        selectVictoryMessage={selectVictoryMessage}
+                        victoryMessage={victoryMessage}
                         currentGuess={currentGuess}
                     />
 
                     <ReplayButton
-                        gameOver={gameOver}
                         reset={reset}
                     />
+
+                    <QuoteButton/>
                 </>
             )}
         </div>

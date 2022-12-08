@@ -12,6 +12,7 @@ function DifficultyDropdown({difficulty, onDifficultySelect}) {
                 <option value={'insane'}>Insane</option>
             </select>
         </div>
+                // <option value={'custom'}>Custom #</option>
     )
 }
 

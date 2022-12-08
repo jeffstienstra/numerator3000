@@ -34,7 +34,7 @@ h1 {
 p {
   margin: 0;
   margin-bottom: 3px;
-  padding: 0 20% 0 20%;
+  /* padding: 0 20% 0 20%; */
   font-size: 1em;
   margin-top: 5px;
   font-weight: bold;
@@ -224,4 +224,24 @@ button:focus .replay {
 
 .victory-message {
   padding-top: 10px;
+  margin-bottom: 30px;
+}
+
+.quote-text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quote-button {
+  height: 1.5em;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.quote-text {
+  background-image: linear-gradient( #313741,#1e2128);
+  padding: 1em;
+  width: 20em;
+  border-radius: .25em;
 }

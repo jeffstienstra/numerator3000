@@ -9,9 +9,6 @@ function Title({gameOver, guesses}) {
                         <span className={((!gameOver && guesses < 2)) || gameOver ? 'green' : 'red'}>◉</span>
                         <span className={((!gameOver && guesses < 3)) || gameOver ? 'green' : 'red'}>◉</span>
                     </>
-                {/* {guesses > 3 && (
-                    [...Array(guesses - 3)].map((span, i) => <span className={!gameOver ? 'red' : 'green'} key={i}>◉</span>)
-                )} */}
             </h1>
         </div>
     )
