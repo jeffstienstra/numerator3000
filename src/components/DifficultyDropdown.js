@@ -1,6 +1,6 @@
 import React from 'react'
 
-function DifficultyDropdown({difficulty, onDifficultySelect, step}) {
+function DifficultyDropdown({difficulty, onDifficultySelect, buildPhase}) {
     const difficultyOptions = [
         {value: 'easy', text: 'Easy'},
         {value: 'average', text: 'Average'},
@@ -10,7 +10,7 @@ function DifficultyDropdown({difficulty, onDifficultySelect, step}) {
         {value: 'insane', text: 'Insane'},
     ]
 
-    if (step > 3) {
+    if (buildPhase > 3) {
         difficultyOptions.push({value: 'custom', text: 'Custom'})
     }
     return (

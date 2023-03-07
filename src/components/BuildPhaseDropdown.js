@@ -1,7 +1,7 @@
 import React from 'react'
 
-function StepDropdown({step, onStepSelect}) {
-    const stepOptions = [
+function BuildPhaseDropdown({buildPhase, onBuildPhaseSelect}) {
+    const biuldPhaseOptions = [
         {value: '1', text: '1'},
         {value: '2', text: '2'},
         {value: '3', text: '3'},
@@ -10,12 +10,12 @@ function StepDropdown({step, onStepSelect}) {
         {value: '6', text: '6'},
     ]
     return (
-        <div className='step-dropdown'>
+        <div className='phase-dropdown'>
             <select
-                className='step-options'
-                value={step}
-                onChange={onStepSelect} >
-                {stepOptions.map((option) => {
+                className='phase-options'
+                value={buildPhase}
+                onChange={onBuildPhaseSelect} >
+                {biuldPhaseOptions.map((option) => {
                     return <option key={option.value} value={option.value}>{option.text}</option>
                 })}
             </select>
@@ -23,4 +23,4 @@ function StepDropdown({step, onStepSelect}) {
     )
 }
 
-export default StepDropdown
+export default BuildPhaseDropdown

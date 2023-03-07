@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import DifficultyDropdown from './DifficultyDropdown'
-import StepDropdown from './StepDropdown'
+import BuildPhaseDropdown from './BuildPhaseDropdown'
 import GameOverMessage from './GameOverMessage'
 import InputField from './InputField'
 import RangeIndicator from './RangeIndicator'
@@ -20,12 +20,12 @@ function Logic() {
     const [guesses, setGuesses] = useState(0);
     const [secretNumber, setSecretNumber] = useState(undefined)
     const [victoryMessage, setVictoryMessage] = useState('')
-    const [step, setStep] = useState(0);
+    const [buildPhase, setBuildPhase] = useState(0);
 
     /*
-     * The step setting in upper left of UI determines what logic is used.
+     * The 'buildPhase' number in upper left of UI determines what logic is used.
      * This is intended for STEM presentation purposes as we step through the
-     * app is 'creation'.
+     * app 'creation' phases.
     */
 
     const customNumber = 562;
@@ -62,7 +62,7 @@ function Logic() {
     // Call this function to create a new randomly generated secret number
     function createSecretNumber(selectedDifficulty) {
         let secretNumber;
-        if (step === 1) {
+        if (buildPhase === 1) {
             // set the range based on difficulty selection
             const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy || 10
             secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
@@ -77,12 +77,12 @@ function Logic() {
         setSecretNumber(secretNumber);
     }
 
-    const selectVictoryMessage = () => {
+    function selectVictoryMessage() {
         // Calculate how far above or below the target guesses we were.
         const guessAccuracy = guesses / targetGuesses[difficulty]
 
-        //   If the target is 10 guesses but we solve it in 8 guesses,
-        //   our guess accuracy is 20% below the target, so based on the following
+        //   If the target is 10 guesses but we solve it in 9 guesses,
+        //   our guess accuracy is 90% (0.9) of the target, so based on the following
         //   if/else statements, which message would we receive?
         if (guesses === 1) {
             return victoryMessages.firstTry
@@ -123,7 +123,7 @@ function Logic() {
         }, [currentGuess] // eslint-disable-line react-hooks/exhaustive-deps
     )
 
-    const setRangeStyle = (style, value) => {
+    function setRangeStyle(style, value) {
 
         // Guess is highest value in range, so show a little inidicator
         const element = document.documentElement.style;
@@ -139,12 +139,12 @@ function Logic() {
         }
     }
 
-    const setLowIndicatorValues = (highestLowGuess) => {
+    function setLowIndicatorValues(highestLowGuess) {
         const tooLowPercent = +highestLowGuess / +difficultyOptions[difficulty];
         setRangeStyle('--too-low-percentage', tooLowPercent)
     }
 
-    const setHighIndicatorValues = (lowestHighGuess) => {
+    function setHighIndicatorValues(lowestHighGuess) {
         if (+lowestHighGuess === +difficultyOptions[difficulty]) {
             setRangeStyle('--too-high-percentage', 'MAX')
         } else {
@@ -153,7 +153,7 @@ function Logic() {
         }
     }
 
-    const onEnter = (event) => {
+    function onEnter(event) {
 
         if (currentGuess === '') return
 
@@ -190,19 +190,19 @@ function Logic() {
         }
     }
 
-    const initializeHighLowGuesses = (selectedDifficulty) => {
+    function initializeHighLowGuesses(selectedDifficulty) {
         setLowGuesses([1])
         setHighGuesses(selectedDifficulty ? [difficultyOptions[selectedDifficulty]] : [difficultyOptions.easy])
     }
 
-    function onStepSelect(event) {
-        const selectedStep = event.target.value
-        setStep(selectedStep)
+    function onBuildPhaseSelect(event) {
+        const selectedBuildPhase = event.target.value
+        setBuildPhase(selectedBuildPhase)
         console.log('event.target.value:', event.target.value);
 
     }
 
-    const onDifficultySelect = (event) => {
+    function onDifficultySelect(event) {
         const selectedDifficulty = event.target.value
         setDifficulty(selectedDifficulty)
         console.log('selectedDifficulty:', selectedDifficulty);
@@ -218,7 +218,7 @@ function Logic() {
     }
 
     // Reset the game to default values
-    const reset = () => {
+    function reset() {
         setCurrentGuess('')
         setInvalidInputFooter('')
         setGameOver(false)
@@ -262,7 +262,7 @@ function Logic() {
             <DifficultyDropdown
                 difficulty={difficulty}
                 onDifficultySelect={onDifficultySelect}
-                step={step}
+                buildPhase={buildPhase}
             />
 
             {!gameOver && (
@@ -298,16 +298,16 @@ function Logic() {
 
                     <ReplayButton
                         reset={reset}
-                        step={step}
+                        buildPhase={buildPhase}
                     />
 
                     <QuoteButton/>
                 </>
             )}
 
-            <StepDropdown
-                step={step}
-                onStepSelect={onStepSelect}
+            <BuildPhaseDropdown
+                buildPhase={buildPhase}
+                onBuildPhaseSelect={onBuildPhaseSelect}
             />
         </div>
     )

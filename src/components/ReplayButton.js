@@ -1,9 +1,9 @@
 import React from 'react'
 
-function ReplayButton({reset, step}) {
+function ReplayButton({reset, buildPhase}) {
     return (
         <>
-        {(step > 3) && (
+        {(buildPhase > 1) && (
             <div className='replay-button'>
                 <button onClick={reset}>
                     <div className='replay'>▶</div>

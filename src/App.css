@@ -246,14 +246,14 @@ button:focus .replay {
   border-radius: .25em;
 }
 
-.step-dropdown {
+.phase-dropdown {
   position: fixed;
-  opacity: 10%;
+  opacity: 90%;
   width: 50px;
   top: 0;
-  left: 0;
+  left: 15px;
 }
 
-.step-options {
+.phase-options {
   width: 75px;
 }
