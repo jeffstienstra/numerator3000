@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import DifficultyDropdown from './DifficultyDropdown'
+import StepDropdown from './StepDropdown'
 import GameOverMessage from './GameOverMessage'
 import InputField from './InputField'
 import RangeIndicator from './RangeIndicator'
@@ -19,22 +20,16 @@ function Logic() {
     const [guesses, setGuesses] = useState(0);
     const [secretNumber, setSecretNumber] = useState(undefined)
     const [victoryMessage, setVictoryMessage] = useState('')
+    const [step, setStep] = useState(0);
 
-    // Call this function to create a new randomly generated secret number
-    function createSecretNumber(selectedDifficulty) {
-        // hard code the range
-        const secretNumber = Math.floor(Math.random() * 10)
-
-        // let the user select the range based on difficulty
-        // const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy || 10
-        // const secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
-
-        // TODO: add a 'custom' field where you can allow the user to enter any number
-        console.log(`7823.${secretNumber}.9621`)
-        setSecretNumber(secretNumber);
-    }
+    /*
+     * The step setting in upper left of UI determines what logic is used.
+     * This is intended for STEM presentation purposes as we step through the
+     * app is 'creation'.
+    */
 
     const customNumber = 562;
+
     const difficultyOptions = {
         easy: 10, // default
         average: 100,
@@ -62,6 +57,24 @@ function Logic() {
         poor: `Well, ${guesses} tries isn't that bad. The target was ${targetGuesses[difficulty]}.`,
         bad: `${guesses} tries...let's step it up a bit. The target was ${targetGuesses[difficulty]}.`,
         terrible: `${guesses} tries?  The target was ${targetGuesses[difficulty]}! Have you no strategy!? Better try again.`,
+    }
+
+    // Call this function to create a new randomly generated secret number
+    function createSecretNumber(selectedDifficulty) {
+        let secretNumber;
+        if (step === 1) {
+            // set the range based on difficulty selection
+            const secretNumberMax = selectedDifficulty ? selectedDifficulty : difficultyOptions.easy || 10
+            secretNumber = Math.floor(Math.random() * secretNumberMax) + 1
+        } else {
+            // hard code the range
+            secretNumber = Math.floor(Math.random() * 10)
+        }
+
+        // TODO: add a 'custom' field where you can allow the user to enter any number
+
+        console.log(`${Math.floor(Math.random() * 10000)}.${secretNumber}.${Math.floor(Math.random() * 1000)}`)
+        setSecretNumber(secretNumber);
     }
 
     const selectVictoryMessage = () => {
@@ -182,9 +195,17 @@ function Logic() {
         setHighGuesses(selectedDifficulty ? [difficultyOptions[selectedDifficulty]] : [difficultyOptions.easy])
     }
 
+    function onStepSelect(event) {
+        const selectedStep = event.target.value
+        setStep(selectedStep)
+        console.log('event.target.value:', event.target.value);
+
+    }
+
     const onDifficultySelect = (event) => {
         const selectedDifficulty = event.target.value
         setDifficulty(selectedDifficulty)
+        console.log('selectedDifficulty:', selectedDifficulty);
         setCurrentGuess('')
         setInvalidInputFooter('')
         setGameOver(false)
@@ -233,7 +254,6 @@ function Logic() {
 
     return (
         <div className='logic'>
-
             <Title
                 gameOver={gameOver}
                 guesses={guesses}
@@ -242,6 +262,7 @@ function Logic() {
             <DifficultyDropdown
                 difficulty={difficulty}
                 onDifficultySelect={onDifficultySelect}
+                step={step}
             />
 
             {!gameOver && (
@@ -277,11 +298,17 @@ function Logic() {
 
                     <ReplayButton
                         reset={reset}
+                        step={step}
                     />
 
                     <QuoteButton/>
                 </>
             )}
+
+            <StepDropdown
+                step={step}
+                onStepSelect={onStepSelect}
+            />
         </div>
     )
 }

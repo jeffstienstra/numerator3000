@@ -1,13 +1,15 @@
 import React from 'react'
 
-function ReplayButton({reset}) {
+function ReplayButton({reset, step}) {
     return (
         <>
-            {/* <div className='replay-button'>
+        {(step > 3) && (
+            <div className='replay-button'>
                 <button onClick={reset}>
                     <div className='replay'>▶</div>
                 </button>
-            </div> */}
+            </div>
+        )}
         </>
     )
 }

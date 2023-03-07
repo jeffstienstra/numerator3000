@@ -245,3 +245,15 @@ button:focus .replay {
   width: 20em;
   border-radius: .25em;
 }
+
+.step-dropdown {
+  position: fixed;
+  opacity: 10%;
+  width: 50px;
+  top: 0;
+  left: 0;
+}
+
+.step-options {
+  width: 75px;
+}
